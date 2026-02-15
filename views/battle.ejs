@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đấu Trường Sinh Tử</title>
+    <link rel="stylesheet" href="/css/battle.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>ĐẤU TRƯỜNG</h1>
+
+    <div class="battle-container" id="arena">
+        <div class="player" id="me">
+            <h2 id="my-name"><%= player.name %></h2>
+            <div class="hp-container">
+                <div class="hp-bar" id="my-hp-bar" style="width: 100%;"></div>
+            </div>
+            <p>Công: <%= player.atk %> | Tốc: <%= player.spd %></p>
+            <div class="status-msg" id="my-status">Đang tìm đối thủ...</div>
+        </div>
+
+        <div class="vs-text">VS</div>
+
+        <div class="player" id="opponent">
+            <h2 id="opp-name">Đang tìm...</h2>
+            <div class="hp-container">
+                <div class="hp-bar" id="opp-hp-bar" style="width: 100%;"></div>
+            </div>
+            <p id="opp-stats">???</p>
+            <div class="status-msg" id="opp-status">...</div>
+        </div>
+    </div>
+
+    <div id="logs" style="color: yellow; font-family: monospace; margin-top: 20px;"></div>
+
+<script>
+    const socket = io();
+    const myData = <%- JSON.stringify(player) %>;
+    
+    socket.emit('join-match', myData);
+
+    socket.on('match-start', (data) => {
+        const isP1 = (socket.id === data.p1.sId);
+        const opponent = isP1 ? data.p2 : data.p1;
+
+        document.getElementById('opp-name').innerText = opponent.name;
+        document.getElementById('opp-stats').innerText = `Công: ${opponent.atk} | Tốc: ${opponent.spd}`;
+        document.getElementById('my-status').innerText = "Trận đấu bắt đầu!";
+    });
+
+    socket.on('receive-attack', (data) => {
+        const isMeAttacking = (socket.id === data.attackerId);
+        const amIP1 = (socket.id === data.p1SId);
+        
+        const myHP = amIP1 ? data.p1HP : data.p2HP;
+        const oppHP = amIP1 ? data.p2HP : data.p1HP;
+
+        updateHP('my-hp-bar', myHP);
+        updateHP('opp-hp-bar', oppHP);
+
+        if (isMeAttacking) {
+            document.getElementById('my-status').innerText = `💥 BẠN ĐÁNH: -${data.damage}`;
+            document.getElementById('opp-status').innerText = `...`;
+        } else {
+            document.getElementById('my-status').innerText = `...`;
+            document.getElementById('opp-status').innerText = `💢 ĐỐI THỦ ĐÁNH: -${data.damage}`;
+            shakeScreen(); 
+        }
+    });
+
+    // --- PHẦN BỔ SUNG HOÀN THIỆN ---
+
+    // 1. Lắng nghe thông báo kết thúc từ Server
+    socket.on('battle-end', (data) => {
+        // Cập nhật trạng thái cuối cùng trên màn hình
+        document.getElementById('my-status').innerText = "KẾT THÚC!";
+        document.getElementById('opp-status').innerText = "NGƯỜI THẮNG: " + data.winner;
+
+        // Hiện thông báo popup
+        alert("TRẬN ĐẤU KẾT THÚC!\nNgười chiến thắng: " + data.winner);
+
+        // Chờ 1 giây rồi tự động quay lại phòng tập (trang chủ)
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 1000);
+    });
+
+    function updateHP(barId, hp) {
+        const percent = Math.max(0, hp);
+        const bar = document.getElementById(barId);
+        bar.style.width = percent + "%";
+        
+        // Đổi màu đỏ khi máu thấp (< 30%)
+        if (percent < 30) {
+            bar.style.backgroundColor = "#ff4d4d";
+        }
+    }
+
+    function shakeScreen() {
+        document.body.classList.add('shake');
+        setTimeout(() => {
+            document.body.classList.remove('shake');
+        }, 400);
+    }
+</script>
+</body>
+</html>

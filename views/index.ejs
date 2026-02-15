@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/css/index.css">
+    <title>Phòng Gym</title>
+</head>
+<body>
+    <h1>Nhân vật của bạn</h1>
+    <div class="character-card">
+        <h3><%= player.name %></h3>
+        <p>Công: <%= player.atk %> | Tốc: <%= player.spd %></p>
+        <form action="/train" method="POST">
+            <button name="stat" value="atk">Luyện Công</button>
+            <button name="stat" value="spd">Luyện Tốc</button>
+        </form>
+    </div>
+    <a href="/battle" class="btn-pvp">VÀO ĐẤU TRƯỜNG ⚔️</a>
+</body>
+</html>
