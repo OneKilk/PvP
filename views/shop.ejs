@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/shop.css">
+    <title>PIXEL SHOP - CỬA HÀNG THÚ CƯNG</title>
+</head>
+<body class="shop-body">
+
+    <div class="shop-wrapper">
+        <div class="shop-nav">
+            <a href="/" class="btn-back">⬅ TRẠM CHỈ HUY</a>
+            <div class="shop-info">
+                <h1 class="shop-banner">PET MARKET</h1>
+                <p class="shop-subtitle">Nâng cấp sức mạnh cùng đồng đội mới</p>
+            </div>
+            <div class="player-gold">💰 MIỄN PHÍ</div>
+        </div>
+
+        <div class="pet-showcase">
+            
+            <div class="pet-item rarity-common">
+                <div class="rarity-tag">COMMON</div>
+                <div class="pet-preview">
+                    <img src="/images/pets/slime.gif" alt="Slime">
+                </div>
+                <div class="pet-details">
+                    <h3>SLIME XANH</h3>
+                    <div class="stats-bonus">
+                        <span class="bonus-hp">❤️ +20</span>
+                        <span class="bonus-atk">⚔️ +2</span>
+                    </div>
+                    <p class="pet-desc">Một chú Slime thân thiện, tăng nhẹ sinh lực.</p>
+                </div>
+                <button class="btn-purchase" onclick="buyPet('slime_xanh')">THU PHỤC</button>
+            </div>
+
+            <div class="pet-item rarity-epic">
+                <div class="rarity-tag">EPIC</div>
+                <div class="pet-preview">
+                    <img src="/images/pets/dragon.gif" alt="Dragon">
+                </div>
+                <div class="pet-details">
+                    <h3>RỒNG LỬA</h3>
+                    <div class="stats-bonus">
+                        <span class="bonus-atk">⚔️ +15</span>
+                        <span class="bonus-spd">⚡ +5</span>
+                    </div>
+                    <p class="pet-desc">Sức mạnh tối thượng từ ngọn lửa vĩnh cửu.</p>
+                </div>
+                <button class="btn-purchase" onclick="buyPet('rong_lua')">THU PHỤC</button>
+            </div>
+
+            <div class="pet-item rarity-rare">
+                <div class="rarity-tag">RARE</div>
+                <div class="pet-preview">
+                    <img src="/images/pets/golem.gif" alt="Golem">
+                </div>
+                <div class="pet-details">
+                    <h3>GOLEM ĐÁ</h3>
+                    <div class="stats-bonus">
+                        <span class="bonus-hp">❤️ +100</span>
+                        <span class="bonus-spd" style="color: #ff4444;">⚡ -5</span>
+                    </div>
+                    <p class="pet-desc">Vệ binh đá cứng cáp nhưng hơi chậm chạp.</p>
+                </div>
+                <button class="btn-purchase" onclick="buyPet('golem_da')">THU PHỤC</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        async function buyPet(petId) {
+            try {
+                const res = await fetch('/shop/buy-pet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ petId })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert('Thu phục thành công!');
+                    window.location.href = '/';
+                } else {
+                    alert('Không thể mua Pet: ' + (data.error || 'Lỗi không xác định'));
+                }
+            } catch (err) {
+                console.error("Lỗi mua pet:", err);
+                alert("Lỗi kết nối máy chủ!");
+            }
+        }
+    </script>
+</body>
+</html>

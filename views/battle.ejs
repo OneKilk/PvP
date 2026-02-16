@@ -2,106 +2,29 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Đấu Trường Sinh Tử</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/battle.css">
-    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/css/matchmaking.css">
+    <title>PHÒNG ĐẤU 8-BIT</title>
 </head>
 <body>
-    <h1>ĐẤU TRƯỜNG</h1>
+    <audio id="hit-sound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 
-    <div class="battle-container" id="arena">
-        <div class="player" id="me">
-            <h2 id="my-name"><%= player.name %></h2>
-            <div class="hp-container">
-                <div class="hp-bar" id="my-hp-bar" style="width: 100%;"></div>
-            </div>
-            <p>Công: <%= player.atk %> | Tốc: <%= player.spd %></p>
-            <div class="status-msg" id="my-status">Đang tìm đối thủ...</div>
-        </div>
+    <%- include('partials/matchmaking') %>
 
-        <div class="vs-text">VS</div>
+    <div class="battle-arena" id="arena" style="display: none;">
+        <%- include('partials/battle_stats', { type: 'player', name: player.name }) %>
 
-        <div class="player" id="opponent">
-            <h2 id="opp-name">Đang tìm...</h2>
-            <div class="hp-container">
-                <div class="hp-bar" id="opp-hp-bar" style="width: 100%;"></div>
-            </div>
-            <p id="opp-stats">???</p>
-            <div class="status-msg" id="opp-status">...</div>
-        </div>
+        <div class="vs-sign">VS</div>
+
+        <%- include('partials/battle_stats', { type: 'enemy', name: 'ĐANG TÌM...' }) %>
     </div>
 
-    <div id="logs" style="color: yellow; font-family: monospace; margin-top: 20px;"></div>
-
-<script>
-    const socket = io();
-    const myData = <%- JSON.stringify(player) %>;
+    <div id="battle-log" class="log-container" style="display: none;"></div>
     
-    socket.emit('join-match', myData);
+    <a href="/" id="btn-back" class="final-back-btn" style="display: none;">QUAY LẠI MENU</a>
 
-    socket.on('match-start', (data) => {
-        const isP1 = (socket.id === data.p1.sId);
-        const opponent = isP1 ? data.p2 : data.p1;
-
-        document.getElementById('opp-name').innerText = opponent.name;
-        document.getElementById('opp-stats').innerText = `Công: ${opponent.atk} | Tốc: ${opponent.spd}`;
-        document.getElementById('my-status').innerText = "Trận đấu bắt đầu!";
-    });
-
-    socket.on('receive-attack', (data) => {
-        const isMeAttacking = (socket.id === data.attackerId);
-        const amIP1 = (socket.id === data.p1SId);
-        
-        const myHP = amIP1 ? data.p1HP : data.p2HP;
-        const oppHP = amIP1 ? data.p2HP : data.p1HP;
-
-        updateHP('my-hp-bar', myHP);
-        updateHP('opp-hp-bar', oppHP);
-
-        if (isMeAttacking) {
-            document.getElementById('my-status').innerText = `💥 BẠN ĐÁNH: -${data.damage}`;
-            document.getElementById('opp-status').innerText = `...`;
-        } else {
-            document.getElementById('my-status').innerText = `...`;
-            document.getElementById('opp-status').innerText = `💢 ĐỐI THỦ ĐÁNH: -${data.damage}`;
-            shakeScreen(); 
-        }
-    });
-
-    // --- PHẦN BỔ SUNG HOÀN THIỆN ---
-
-    // 1. Lắng nghe thông báo kết thúc từ Server
-    socket.on('battle-end', (data) => {
-        // Cập nhật trạng thái cuối cùng trên màn hình
-        document.getElementById('my-status').innerText = "KẾT THÚC!";
-        document.getElementById('opp-status').innerText = "NGƯỜI THẮNG: " + data.winner;
-
-        // Hiện thông báo popup
-        alert("TRẬN ĐẤU KẾT THÚC!\nNgười chiến thắng: " + data.winner);
-
-        // Chờ 1 giây rồi tự động quay lại phòng tập (trang chủ)
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 1000);
-    });
-
-    function updateHP(barId, hp) {
-        const percent = Math.max(0, hp);
-        const bar = document.getElementById(barId);
-        bar.style.width = percent + "%";
-        
-        // Đổi màu đỏ khi máu thấp (< 30%)
-        if (percent < 30) {
-            bar.style.backgroundColor = "#ff4d4d";
-        }
-    }
-
-    function shakeScreen() {
-        document.body.classList.add('shake');
-        setTimeout(() => {
-            document.body.classList.remove('shake');
-        }, 400);
-    }
-</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/battle.js"></script>
 </body>
 </html>

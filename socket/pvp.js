@@ -1,59 +1,132 @@
-let queue = null;
+let waitingPlayer = null;
 
-module.exports = (io) => {
+module.exports = function(io) {
     io.on('connection', (socket) => {
-        socket.on('join-match', (playerData) => {
-            if (!queue) {
-                queue = { socket, data: playerData };
-                socket.emit('waiting', 'Đang tìm đối thủ...');
-            } else {
-                const opponent = queue;
-                queue = null;
-                const room = `room_${socket.id}`;
+        console.log(`📡 Socket connected: ${socket.id}`);
 
-                socket.join(room);
-                opponent.socket.join(room);
+        socket.on('startBattle', (playerData) => {
+            // --- LOGIC CỘNG CHỈ SỐ PET (FIX CHÍNH TẠI ĐÂY) ---
+            const finalStats = calculateFinalStats(playerData);
+            
+            const player = {
+                id: socket.id,
+                name: finalStats.name,
+                hp: finalStats.hp,
+                maxHp: finalStats.hp, // Lưu maxHp để hiển thị thanh máu %
+                atk: finalStats.atk,
+                spd: finalStats.spd, // Thêm tốc độ nếu muốn dùng sau này
+                avatar: finalStats.avatar,
+                petAvatar: finalStats.petAvatar // Gửi kèm để hiện pet trong trận
+            };
 
-                let p1 = { ...opponent.data, sId: opponent.socket.id, hp: 100 };
-                let p2 = { ...playerData, sId: socket.id, hp: 100 };
+            console.log(`🔍 ${player.name} (ATK: ${player.atk}, HP: ${player.hp}) đang tìm trận...`);
 
-                io.to(room).emit('match-start', { p1, p2 });
+            if (waitingPlayer && waitingPlayer.id !== socket.id) {
+                const opponentSocket = io.sockets.sockets.get(waitingPlayer.id);
+                
+                if (opponentSocket) {
+                    const opponent = waitingPlayer;
+                    waitingPlayer = null; 
 
-                // Xác định người đánh đầu tiên dựa trên SPD
-                let turnId = (p1.spd >= p2.spd) ? p1.sId : p2.sId;
+                    const roomId = `room_${opponent.id}_${socket.id}`;
+                    socket.join(roomId);
+                    opponentSocket.join(roomId);
 
-                const battleInterval = setInterval(() => {
-                    let attacker = (turnId === p1.sId) ? p1 : p2;
-                    let victim = (turnId === p1.sId) ? p2 : p1;
+                    console.log(`⚔️ MATCH: ${opponent.name} VS ${player.name}`);
 
-                    const damage = Math.max(5, attacker.atk + Math.floor(Math.random() * 5));
-                    victim.hp -= damage;
-
-                    // Gửi cập nhật máu
-                    io.to(room).emit('receive-attack', {
-                        attackerId: attacker.sId,
-                        p1SId: p1.sId,
-                        damage: damage,
-                        p1HP: Math.max(0, p1.hp),
-                        p2HP: Math.max(0, p2.hp)
+                    // Gửi dữ liệu ĐÃ CỘNG BUFF về cho cả 2 client
+                    io.to(roomId).emit('matchFound', {
+                        players: [opponent, player]
                     });
 
-                    // Kiểm tra xem có ai hết máu chưa trước khi đổi lượt
-                    if (p1.hp <= 0 || p2.hp <= 0) {
-                        const winner = p1.hp > 0 ? p1.name : p2.name;
-                        
-                        // Gửi thông báo người chiến thắng
-                        io.to(room).emit('battle-end', { winner });
-                        
-                        // Dừng vòng lặp ngay lập tức
-                        return clearInterval(battleInterval);
-                    }
+                    setTimeout(() => {
+                        startCombatLoop(io, roomId, [opponent, player]);
+                    }, 2000);
+                } else {
+                    waitingPlayer = player;
+                }
+            } else {
+                waitingPlayer = player;
+            }
+        });
 
-                    // Nếu chưa ai chết thì mới ĐỔI LƯỢT
-                    turnId = victim.sId;
-
-                }, 1500);
+        socket.on('disconnect', () => {
+            if (waitingPlayer && waitingPlayer.id === socket.id) {
+                waitingPlayer = null;
             }
         });
     });
 };
+
+/**
+ * Hàm tính toán chỉ số cuối cùng dựa trên Pet
+ */
+function calculateFinalStats(data) {
+    // Chỉ số gốc (fallback nếu data rỗng)
+    let hp = data?.hp || 100;
+    let atk = data?.atk || 10;
+    let spd = data?.spd || 10;
+    let name = data?.name || "Chiến binh ẩn danh";
+    let avatar = data?.avatar || "";
+    let petAvatar = "";
+
+    // Nếu có dữ liệu pet được gửi từ client/session
+    if (data?.pet) {
+        hp += (Number(data.pet.hpBuff) || 0);
+        atk += (Number(data.pet.atkBuff) || 0);
+        spd += (Number(data.pet.spdBuff) || 0);
+        petAvatar = data.pet.avatar || "";
+    }
+
+    return { name, hp, atk, spd, avatar, petAvatar };
+}
+
+/**
+ * Vòng lặp chiến đấu
+ */
+function startCombatLoop(io, roomId, players) {
+    let battleActive = true;
+    let turn = 0;
+
+    const interval = setInterval(() => {
+        if (!battleActive) return;
+
+        // Xác định ai đánh, ai chịu đòn
+        const attackerIdx = turn % 2;
+        const defenderIdx = 1 - attackerIdx;
+        const attacker = players[attackerIdx];
+        const defender = players[defenderIdx];
+
+        // Tính sát thương (có biến thiên 20%)
+        const dmg = Math.round(attacker.atk * (0.9 + Math.random() * 0.2));
+        defender.hp -= dmg;
+        if (defender.hp < 0) defender.hp = 0;
+
+        // Gửi cập nhật trạng thái trận đấu
+        io.to(roomId).emit('battleUpdate', {
+            attackerId: attacker.id,
+            targetId: defender.id,
+            damage: dmg,
+            // Gửi mảng players mới với HP đã trừ
+            players: players.map(p => ({ 
+                id: p.id, 
+                hp: p.hp, 
+                maxHp: p.maxHp 
+            })),
+            log: `<span class="log-atk">${attacker.name}</span> tung đòn gây <span class="log-dmg">${dmg}</span> sát thương!`
+        });
+
+        // Kiểm tra kết thúc
+        if (defender.hp <= 0) {
+            battleActive = false;
+            clearInterval(interval);
+            
+            io.to(roomId).emit('gameOver', { 
+                winnerId: attacker.id,
+                log: `🏆 <b>${attacker.name}</b> đã giành chiến thắng vang dội!` 
+            });
+        }
+        
+        turn++;
+    }, 1500); // Tốc độ đánh: 1.5 giây / lượt
+}

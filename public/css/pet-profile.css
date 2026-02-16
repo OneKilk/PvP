@@ -1,0 +1,55 @@
+:root {
+    --common: #d1d8e0;
+    --rare: #45aaf2;
+    --epic: #a55eea;
+    --gold: #f7b731;
+}
+
+.profile-body {
+    margin: 0; background: #0c2461; height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    font-family: 'Courier New', monospace;
+}
+
+.profile-container {
+    display: flex; gap: 30px; padding: 40px;
+    background: rgba(0,0,0,0.9); border: 3px solid var(--gold);
+    border-radius: 20px; width: 850px; box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+.pet-visual-box {
+    flex: 1; background: #000; height: 350px; border-radius: 15px;
+    display: flex; justify-content: center; align-items: center;
+    overflow: hidden; border: 2px solid #333;
+}
+
+.pet-display-img {
+    width: 90%; height: 90%; object-fit: contain;
+    image-rendering: pixelated;
+    mix-blend-mode: screen; /* Khử nền caro cực tốt trên nền đen */
+}
+
+.pet-details-box { flex: 1.5; color: white; }
+.pet-title { font-size: 2.5rem; color: var(--gold); margin: 0; }
+
+.stats-grid-profile {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px; margin: 25px 0;
+}
+
+.stat-card {
+    background: #1a1a1a; padding: 15px; border-radius: 8px;
+    text-align: center; border: 1px solid #444;
+}
+
+.stat-card .val { color: #2ecc71; font-size: 1.2rem; display: block; }
+.description-box {
+    background: rgba(255,255,255,0.05); padding: 15px;
+    border-left: 4px solid var(--gold); font-style: italic; margin-bottom: 20px;
+}
+
+.btn-back-home {
+    display: block; padding: 15px; background: #eb4d4b;
+    color: white; text-align: center; text-decoration: none;
+    font-weight: bold; border-radius: 5px; box-shadow: 0 4px #b33939;
+}

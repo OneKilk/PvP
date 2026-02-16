@@ -1,0 +1,170 @@
+:root {
+    --common: #d1d8e0;
+    --rare: #45aaf2;
+    --epic: #a55eea;
+    --gold: #f7b731;
+    --pixel-yellow: #fed330;
+    --bg-dark: #2f3640;
+    --card-bg: #353b48;
+}
+
+/* 1. NỀN SÁNG VÀ RỰC RỠ HƠN */
+.shop-body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #1e3799 0%, #0c2461 100%); 
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; 
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2. KHUNG SHOP NỔI BẬT */
+.shop-wrapper {
+    width: 95%;
+    max-width: 1200px;
+    height: 90vh;
+    background: rgba(15, 15, 15, 0.7); 
+    backdrop-filter: blur(15px);
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    box-sizing: border-box;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+}
+
+/* 3. HEADER */
+.shop-nav {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--gold);
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.shop-banner {
+    color: var(--gold);
+    font-size: 2.2rem;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(247, 183, 49, 0.8);
+    letter-spacing: 3px;
+}
+
+.shop-subtitle {
+    color: #dcdde1;
+    font-weight: bold;
+}
+
+/* 4. DANH SÁCH PET - CUỘN NỘI BỘ */
+.pet-showcase {
+    flex-grow: 1;
+    overflow-y: auto; 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+    padding: 20px 10px;
+}
+
+.pet-showcase::-webkit-scrollbar { width: 8px; }
+.pet-showcase::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+/* 5. THẺ PET */
+.pet-item {
+    background: var(--card-bg);
+    border: 3px solid #718093;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.pet-item:hover {
+    transform: translateY(-5px);
+}
+
+.rarity-common { border-color: var(--common); box-shadow: 0 0 10px rgba(209, 216, 224, 0.2); }
+.rarity-rare { border-color: var(--rare); box-shadow: 0 0 15px rgba(69, 170, 242, 0.4); }
+.rarity-epic { border-color: var(--epic); box-shadow: 0 0 20px rgba(165, 94, 234, 0.5); }
+
+/* --- FIX LỖI ẢNH CÓ NỀN TRẮNG --- */
+.pet-preview {
+    width: 120px;
+    height: 120px;
+    background: #ffffff; /* Đổi nền khung ảnh thành trắng để hòa trộn */
+    border-radius: 10px; /* Chuyển sang bo góc nhẹ nhìn sẽ chuyên nghiệp hơn hình tròn */
+    margin-bottom: 15px;
+    border: 2px solid rgba(255,255,255,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.pet-preview img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    /* THẦN CHÚ: Triệt tiêu nền trắng của ảnh */
+    mix-blend-mode: multiply; 
+}
+
+.stats-bonus {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+/* 6. NÚT BẤM */
+.btn-purchase {
+    background: #20bf6b;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 4px #1b8d50;
+    transition: all 0.1s;
+    margin-top: auto; 
+}
+
+.btn-purchase:active {
+    box-shadow: 0 0;
+    transform: translateY(4px);
+}
+
+.btn-back {
+    text-decoration: none;
+    color: #fff;
+    background: #eb4d4b;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0 4px #b33939;
+}
+
+.player-gold {
+    background: rgba(0,0,0,0.6);
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    font-weight: bold;
+    font-size: 1.1rem;
+}

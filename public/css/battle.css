@@ -1,104 +1,158 @@
+/* FONT CHỮ PIXEL - Fen có thể thay bằng font 'Press Start 2P' từ Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+    --pixel-black: #000000;
+    --pixel-white: #ffffff;
+    --pixel-red: #e74c3c;
+    --pixel-green: #2ecc71;
+    --pixel-yellow: #f1c40f;
+    --pixel-blue: #3498db;
+    --bg-color: #2c3e50;
+}
+
+* { 
+    box-sizing: border-box; 
+    image-rendering: pixelated; /* Giúp ảnh không bị mờ khi phóng to */
+}
+
 body {
-    background: #000000;
-    background-image: radial-gradient(circle, #2c0000 0%, #000000 100%);
-    color: #ffffff;
-    font-family: 'Courier New', Courier, monospace;
-    text-align: center;
+    background-color: var(--bg-color);
+    background-image: 
+        linear-gradient(45deg, #222 25%, transparent 25%), 
+        linear-gradient(-45deg, #222 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #222 75%), 
+        linear-gradient(-45deg, transparent 75%, #222 75%);
+    background-size: 40px 40px; /* Tạo nền ô vuông kiểu Dungeon */
+    color: var(--pixel-white);
+    font-family: 'Press Start 2P', cursive;
     margin: 0;
     overflow: hidden;
+    height: 100vh;
 }
 
-h1 {
-    color: #ff3f34;
-    font-size: 40px;
-    text-shadow: 0 0 10px #ff3f34;
-    margin: 20px 0;
-}
-
-.battle-container {
+/* --- ARENA PHẲNG --- */
+.battle-arena {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 70vh;
-    padding: 0 50px;
+    height: 60vh;
+    padding: 0 20px;
+    perspective: none; /* Bỏ 3D */
 }
 
-.player {
+.fighter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 250px;
-    padding: 20px;
-    border: 3px solid #ffffff;
-    background: rgba(255, 255, 255, 0.1);
     position: relative;
 }
 
-/* Thanh HP xịn */
+/* --- AVATAR KHỐI VUÔNG --- */
+.character-sprite {
+    width: 150px;
+    height: 150px;
+    background: #444;
+    border: 6px solid var(--pixel-white);
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.5); /* Đổ bóng cứng kiểu pixel */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+.fighter-img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+/* --- THANH MÁU NES STYLE --- */
 .hp-container {
-    width: 100%;
-    height: 25px;
-    background: #333;
-    border-radius: 15px;
-    margin: 15px 0;
-    overflow: hidden;
-    border: 1px solid #fff;
+    width: 220px;
+    height: 30px;
+    background: var(--pixel-black);
+    border: 4px solid var(--pixel-white);
+    padding: 2px;
+    position: relative;
 }
 
 .hp-bar {
-    width: 100%;
     height: 100%;
-    background: linear-gradient(to right, #ff4d4d, #ff0000);
-    transition: width 0.5s ease-in-out;
+    width: 100%;
+    background: var(--pixel-green);
+    transition: width 0.2s steps(10); /* Giảm máu kiểu giật giật cho đúng chất pixel */
 }
 
-.vs-text {
-    font-size: 80px;
-    font-style: italic;
-    color: #ffd32a;
-    text-shadow: 0 0 20px #ffd32a;
+.hp-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: -25px;
+    font-size: 10px;
+    color: var(--pixel-white);
 }
 
-.action-menu {
+/* --- CHỮ VS --- */
+.vs-sign {
+    font-size: 2.5rem;
+    color: var(--pixel-yellow);
+    text-shadow: 6px 6px 0px var(--pixel-black);
+}
+
+/* --- DAMAGE POP KIỂU 8-BIT --- */
+.damage-pop {
+    position: absolute;
+    color: var(--pixel-red);
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 4px 4px 0px var(--pixel-black);
+    animation: pixelJump 0.6s steps(5) forwards;
+    z-index: 100;
+}
+
+@keyframes pixelJump {
+    0% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-40px); }
+    100% { transform: translateY(-20px); opacity: 0; }
+}
+
+/* --- LOG CHIẾN ĐẤU --- */
+.log-container {
+    height: 40vh;
+    background: var(--pixel-black);
+    border-top: 6px solid var(--pixel-white);
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.log-container p {
+    margin: 5px 0;
+    border-left: 8px solid var(--pixel-blue);
+    padding-left: 10px;
+}
+
+/* --- NÚT BẤM RETRO --- */
+.final-back-btn {
     position: fixed;
-    bottom: 50px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background: #1e272e;
-    padding: 20px;
-    border: 2px solid #ffd32a;
-    border-radius: 10px;
-    display: none; /* Chỉ hiện khi đến lượt */
-}
-
-.btn-attack {
-    background: #ff3f34;
-    color: white;
-    border: none;
     padding: 15px 30px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
+    background: var(--pixel-yellow);
+    color: var(--pixel-black) !important;
+    border: 4px solid var(--pixel-white);
+    box-shadow: 6px 6px 0px var(--pixel-black);
+    text-decoration: none;
+    font-size: 14px;
+    display: none;
 }
 
-.btn-attack:disabled {
-    background: #57606f;
-    cursor: not-allowed;
-}
-
-.status-msg {
-    color: #ffd32a;
-    font-size: 20px;
-    margin-top: 10px;
-}
-@keyframes shake {
-    0% { transform: translate(1px, 1px) rotate(0deg); }
-    10% { transform: translate(-1px, -2px) rotate(-1deg); }
-    30% { transform: translate(3px, 2px) rotate(0deg); }
-    50% { transform: translate(-1px, 2px) rotate(1deg); }
-    70% { transform: translate(3px, 1px) rotate(-1deg); }
-    100% { transform: translate(1px, -2px) rotate(0deg); }
-}
-
-.shake {
-    animation: shake 0.5s;
-    animation-iteration-count: infinite;
+.final-back-btn:active {
+    box-shadow: none;
+    transform: translate(-45%, 4px);
 }

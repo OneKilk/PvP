@@ -1,0 +1,53 @@
+/* Nút Admin ẩn ở góc phải dưới cùng */
+.admin-bg-tool {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    opacity: 0.1; /* Rất mờ, chỉ fen biết chỗ mà hover vào */
+    transition: opacity 0.3s ease;
+    z-index: 9999;
+}
+
+.admin-bg-tool:hover {
+    opacity: 1;
+}
+
+.btn-admin {
+    background: #222;
+    color: #00ff00; /* Màu xanh hacker */
+    border: 2px solid #00ff00;
+    font-family: 'VT323', monospace;
+    cursor: pointer;
+    padding: 5px 15px;
+    font-size: 1rem;
+    box-shadow: 4px 4px 0px #000;
+}
+
+.btn-admin:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+/* Một vài class dọn dẹp cho HTML */
+.edit-label {
+    position: absolute; 
+    bottom: 0; 
+    background: rgba(0,0,0,0.7); 
+    width: 100%; 
+    text-align: center; 
+    font-size: 0.8rem;
+    padding: 5px 0;
+}
+
+.hint-text {
+    font-size: 0.8rem; 
+    text-align: center; 
+    margin-top: 10px; 
+    color: #aaa;
+}
+
+.footer-credit {
+    text-align: center; 
+    color: #555; 
+    font-size: 0.8rem;
+}

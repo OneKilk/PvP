@@ -1,19 +1,123 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/index.css">
-    <title>Phòng Gym</title>
+    <link rel="stylesheet" href="/css/training.css">
+    <link rel="stylesheet" href="/css/admin.css"> 
+    <link rel="stylesheet" href="/css/gym-pet.css"> 
+    <title>PIXEL HERO - TRẠM CHỈ HUY</title>
 </head>
-<body>
-    <h1>Nhân vật của bạn</h1>
-    <div class="character-card">
-        <h3><%= player.name %></h3>
-        <p>Công: <%= player.atk %> | Tốc: <%= player.spd %></p>
-        <form action="/train" method="POST">
-            <button name="stat" value="atk">Luyện Công</button>
-            <button name="stat" value="spd">Luyện Tốc</button>
-        </form>
+<body style="background-image: url('<%= bg %>'); background-size: cover; background-position: center; background-attachment: fixed;">
+    
+    <div id="training-overlay" style="display:none;">
+        <h2 style="color: #fff; font-size: 2rem;">NHẤN PHÍM!</h2>
+        <div id="target-key">W</div>
+        <div class="timer-container"><div id="timer-bar"></div></div>
     </div>
-    <a href="/battle" class="btn-pvp">VÀO ĐẤU TRƯỜNG ⚔️</a>
+
+    <div class="admin-bg-tool" id="admin-panel" style="display: none;">
+        <button class="btn-admin" onclick="document.getElementById('bg-input').click()">🛠 ĐỔI NỀN</button>
+        <input type="file" id="bg-input" hidden accept="image/*" onchange="uploadBackground(this)">
+    </div>
+
+    <div class="dashboard-container">
+        <div class="side-panel">
+            <div class="pixel-panel">
+                <h2 class="panel-title">📊 TRẠNG THÁI</h2>
+                
+                <div class="stat-item">
+                    <span class="stat-label-fixed">MÁU</span>
+                    <span id="hp-val" class="stat-value color-hp"><%= player.displayHp %></span>
+                    <% if (player.pet && player.pet.hpBuff > 0) { %>
+                        <small class="pet-buff-tag-fixed">+<%= player.pet.hpBuff %></small>
+                    <% } %>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label-fixed">CÔNG</span>
+                    <span id="atk-val" class="stat-value color-atk"><%= player.displayAtk %></span>
+                    <% if (player.pet && player.pet.atkBuff > 0) { %>
+                        <small class="pet-buff-tag-fixed">+<%= player.pet.atkBuff %></small>
+                    <% } %>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label-fixed">TỐC</span>
+                    <span id="spd-val" class="stat-value color-spd"><%= player.displaySpd %></span>
+                    <% if (player.pet && player.pet.spdBuff > 0) { %>
+                        <small class="pet-buff-tag-fixed">+<%= player.pet.spdBuff %></small>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="pixel-panel">
+                <a href="/shop" class="btn-pixel" style="display:block; text-decoration:none; background: #ff9800; color:#000; text-align:center; margin-bottom: 10px;">🥚 CỬA HÀNG PET</a>
+                <a href="/leaderboard" class="btn-pixel" style="display:block; text-decoration:none; background: var(--pixel-yellow); color:#000; text-align:center;">🏆 BẢNG XẾP HẠNG</a>
+            </div>
+        </div>
+
+        <div class="center-panel">
+            <div class="name-editor">
+                <input type="text" id="player-name" value="<%= player.name %>" maxlength="12">
+                <button onclick="saveName()" class="btn-pixel" style="width: auto;">LƯU</button>
+            </div>
+
+            <div class="avatar-hero-section">
+                <div id="avatar-display" onclick="document.getElementById('file-input').click()" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                    <% if (player.avatar) { %>
+                        <img src="<%= player.avatar %>" class="hero-img">
+                    <% } else { %> 
+                        <span style="font-size: 5rem;">🛡️</span> 
+                    <% } %>
+                </div>
+                
+                <div class="pet-floating-box" onclick="window.location.href='/pet-profile'" title="<%= player.pet && player.pet.name ? player.pet.name : 'Xem Hồ Sơ Pet' %>">
+    <% if (player.pet && player.pet.avatar) { %>
+        <img src="<%= player.pet.avatar %>" class="pet-mini-img">
+        
+    <% } else { %> 
+        <div class="pet-empty" onclick="event.stopPropagation(); window.location.href='/shop'">🐾</div>
+    <% } %>
+</div>
+
+                <div class="edit-label">CLICK AVATAR ĐỂ SỬA</div>
+            </div>
+
+            <input type="file" id="file-input" hidden accept="image/*" onchange="uploadAvatar(this)">
+            <a href="/battle" class="btn-launch">VÀO ĐẤU TRƯỜNG 🔥</a>
+        </div>
+
+        <div class="side-panel">
+            <div class="pixel-panel">
+                <h2 class="panel-title">🏋️ HUẤN LUYỆN</h2>
+                <button onclick="startTraining('hp')" class="btn-pixel">LUYỆN THỂ ❤️</button>
+                <button onclick="startTraining('atk')" class="btn-pixel">LUYỆN CÔNG ⚔️</button>
+                <button onclick="startTraining('spd')" class="btn-pixel">LUYỆN TỐC ⚡</button>
+            </div>
+
+            <div class="pixel-panel gym-panel">
+                <h2 class="panel-title">🏪 GYM AFK</h2>
+                <% if (player.isTrainingAFK) { %>
+                    <p class="blink-text">🏋️ Đang tập <%= player.trainingStat.toUpperCase() %>...</p>
+                    <button onclick="toggleGym()" class="btn-pixel" style="background: #f44336;">RỜI PHÒNG</button>
+                <% } else { %>
+                    <select id="afk-stat" class="btn-pixel afk-select">
+                        <option value="hp">TẬP HP (MÁU)</option>
+                        <option value="atk">TẬP ATK (CÔNG)</option>
+                        <option value="spd">TẬP SPD (TỐC)</option>
+                    </select>
+                    <button onclick="toggleGym()" class="btn-pixel" style="background: #4caf50;">VÀO TẬP AFK</button>
+                <% } %>
+            </div>
+            
+            <div class="pixel-panel footer-credit">
+                DESIGN BY: <span style="color: var(--pixel-yellow);">TÚ ĐẸP TRAI</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/game-logic.js"></script>
 </body>
 </html>

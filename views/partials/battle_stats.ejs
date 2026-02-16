@@ -1,0 +1,19 @@
+<div id="<%= type %>-hero" class="fighter">
+    <span id="<%= type %>-hp-text" class="hp-text">Đang nạp...</span>
+    <div class="hp-container">
+        <div id="<%= type %>-hp-bar" class="hp-bar"></div>
+    </div>
+    <div class="character-sprite" id="<%= type %>-avatar-box">
+        <% if (type === 'enemy') { %><span>👾</span><% } %>
+    </div>
+    <div class="name-tag" id="<%= type === 'enemy' ? 'enemy-name-display' : '' %>">
+        <%= name %>
+    </div>
+    <div id="<%= type %>-damage-pos"></div>
+</div>
+
+<% if (type === 'player') { %>
+<script id="player-data-raw" type="application/json">
+    <%- JSON.stringify(player) %>
+</script>
+<% } %>

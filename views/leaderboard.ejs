@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BẢNG ANH HÙNG | PIXEL GYM</title>
+    <link rel="stylesheet" href="/css/leaderboard.css">
+</head>
+<body>
+    <div style="width: 100%; max-width: 1400px; margin: 0 auto; padding: 10px;">
+        <a href="/" class="back-link"><< QUAY LẠI CĂN CỨ</a>
+        
+        <h1>🏆 HALL OF FAME 🏆</h1>
+
+        <div class="leaderboard-container">
+            <div class="table-wrapper">
+                <table class="pixel-table">
+                    <thead>
+                        <tr><th colspan="3">⚔️ TOP SỨC MẠNH</th></tr>
+                        <tr class="header-sub">
+                            <th>#</th><th>CHIẾN BINH</th><th>ATK</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% topAtk.forEach((p, index) => { %>
+                            <tr class="top-<%= index + 1 %>">
+                                <td><%= index + 1 %></td>
+                                <td class="player-name"><%= p.name %></td>
+                                <td class="val-atk"><%= p.atk.toFixed(1) %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="pixel-table">
+                    <thead>
+                        <tr><th colspan="3">❤️ TOP BỀN BỈ</th></tr>
+                        <tr class="header-sub">
+                            <th>#</th><th>CHIẾN BINH</th><th>HP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% topHp.forEach((p, index) => { %>
+                            <tr class="top-<%= index + 1 %>">
+                                <td><%= index + 1 %></td>
+                                <td class="player-name"><%= p.name %></td>
+                                <td class="val-hp"><%= p.hp.toFixed(1) %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="pixel-table">
+                    <thead>
+                        <tr><th colspan="3">⚡ TOP TỐC ĐỘ</th></tr>
+                        <tr class="header-sub">
+                            <th>#</th><th>CHIẾN BINH</th><th>SPD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% topSpd.forEach((p, index) => { %>
+                            <tr class="top-<%= index + 1 %>">
+                                <td><%= index + 1 %></td>
+                                <td class="player-name"><%= p.name %></td>
+                                <td class="val-spd"><%= p.spd.toFixed(1) %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

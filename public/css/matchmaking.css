@@ -1,0 +1,106 @@
+.match-overlay-vs {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #000;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.vs-container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+/* Khung Avatar */
+.pixel-frame {
+    width: 150px; height: 150px;
+    border: 6px solid #fff;
+    background: #111;
+    display: flex; justify-content: center; align-items: center;
+    position: relative;
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+}
+
+.player-side .pixel-frame { border-color: #3498db; box-shadow: 0 0 20px rgba(52, 152, 219, 0.5); }
+.enemy-side .pixel-frame { border-color: #e74c3c; box-shadow: 0 0 20px rgba(231, 76, 60, 0.5); }
+
+.vs-avatar {
+    width: 90%; height: 90%;
+    image-rendering: pixelated;
+    object-fit: contain;
+}
+
+.vs-name {
+    margin-top: 15px;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Chữ VS ở giữa */
+.vs-logo {
+    font-size: 5rem;
+    color: #f1c40f;
+    font-weight: 900;
+    font-style: italic;
+    text-shadow: 5px 5px #000, -2px -2px 0 #fff;
+    animation: vsPulse 0.5s infinite alternate;
+}
+
+.mystery-mark {
+    font-size: 5rem;
+    color: #444;
+    animation: mysteryBlink 0.3s infinite;
+}
+
+/* Nút hủy */
+.btn-abort-pixel {
+    margin-top: 50px;
+    padding: 12px 30px;
+    background: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+    border: 4px solid #000;
+    box-shadow: 4px 4px 0 #800000;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* Hiệu ứng */
+@keyframes vsPulse {
+    from { transform: scale(1) rotate(-5deg); filter: brightness(1); }
+    to { transform: scale(1.1) rotate(5deg); filter: brightness(1.5); }
+}
+
+@keyframes mysteryBlink {
+    0% { opacity: 0.2; }
+    100% { opacity: 0.8; }
+}
+
+.px-status {
+    color: #2ecc71;
+    font-family: monospace;
+    margin-top: 20px;
+}
+
+/* Chấm loading pixel */
+.pixel-loader-dots span {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: #fff;
+    margin: 0 4px;
+    animation: dotJump 0.6s infinite alternate;
+}
+.pixel-loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+.pixel-loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotJump {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}

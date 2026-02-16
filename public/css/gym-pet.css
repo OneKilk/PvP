@@ -1,0 +1,123 @@
+/* --- CĂN GIỮA CHỈ SỐ TUYỆT ĐỐI --- */
+.stat-item {
+    display: flex;
+    justify-content: center; /* Con số luôn nằm giữa */
+    align-items: center;
+    background: #000;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 2px solid #555;
+    position: relative; 
+    min-height: 55px;
+    overflow: hidden; /* Cắt bỏ bất cứ thứ gì tràn ra khỏi khung chỉ số */
+}
+
+/* Nhãn MÁU/CÔNG/TỐC cố định lề trái */
+.stat-label-fixed {
+    position: absolute;
+    left: 12px;
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: bold;
+    z-index: 2;
+}
+
+/* Con số chính */
+.stat-value {
+    font-size: 2rem;
+    text-align: center;
+    display: inline-block;
+    z-index: 1;
+}
+
+/* Chỉ số BUFF từ Pet cố định lề phải */
+.pet-buff-tag-fixed {
+    position: absolute;
+    right: 12px;
+    font-size: 0.9rem;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2px 6px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px;
+    z-index: 2;
+}
+
+/* --- PET LƠ LỬNG (FIX VỪA KHUNG) --- */
+.avatar-hero-section {
+    position: relative;
+}
+
+/* --- PET LƠ LỬNG GÓC TRÊN (FIX HỞ DƯỚI) --- */
+.pet-floating-box {
+    position: absolute;
+    top: -25px;
+    right: -25px;
+    width: 80px;  /* Có thể thu nhỏ lại một chút cho tinh tế */
+    height: 80px;
+    background: #000;
+    border: 3px solid var(--pixel-yellow);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;    /* Căn giữa dọc */
+    justify-content: center; /* Căn giữa ngang */
+    z-index: 100;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.4);
+    animation: petFloatEffect 3s ease-in-out infinite;
+    overflow: hidden; 
+}
+
+.pet-mini-img {
+    width: 90%;  /* Tăng lên 90% vì không còn tên chiếm chỗ */
+    height: 90%;
+    image-rendering: pixelated;
+    object-fit: contain;
+    mix-blend-mode: screen;
+    margin-bottom: 0; /* Bỏ phần ép ảnh xuống đáy */
+}
+
+.pet-mini-info-bar {
+    width: 100%;
+    background: rgba(0, 255, 0, 0.2); /* Nền nhẹ cho phần tên pet */
+    text-align: center;
+    padding: 2px 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.pet-mini-name {
+    font-size: 0.6rem;
+    color: var(--pixel-green);
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: 1px 1px #000;
+}
+.pet-empty {
+    font-size: 2rem;
+    opacity: 0.3;
+}
+
+/* Hiệu ứng bay bổng */
+@keyframes petFloatEffect {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+}
+
+/* --- CÁC STYLE PHỤ --- */
+.hero-img {
+    max-width: 90%;
+    max-height: 90%;
+    image-rendering: pixelated;
+    object-fit: contain;
+}
+
+.blink-text {
+    animation: blink 1.5s infinite;
+    color: #2ecc71;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

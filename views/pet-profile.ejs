@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/pet-profile.css">
+    <title>HỒ SƠ ĐỒNG ĐỘI</title>
+</head>
+<body class="profile-body">
+
+    <div class="profile-container">
+        <div class="pet-visual-box">
+            <% if (player.pet && (player.pet.avatar || player.pet.image)) { %>
+                <img src="<%= player.pet.avatar || player.pet.image %>" class="pet-display-img">
+            <% } else { %>
+                <div class="pet-empty-state">🐾<br>TRỐNG</div>
+            <% } %>
+        </div>
+
+        <div class="pet-details-box">
+            <h1 class="pet-title"><%= (player.pet && player.pet.name) ? player.pet.name : 'VÔ DANH' %></h1>
+            
+            <% 
+                let rarity = (player.pet && player.pet.rarity) ? player.pet.rarity.toLowerCase() : 'common';
+            %>
+            <span class="pet-rarity-tag" style="color: var(--<%= rarity %>)">
+                ◆ <%= rarity.toUpperCase() %>
+            </span>
+
+            <div class="stats-grid-profile">
+                <div class="stat-card">
+                    <span class="label">SINH LỰC</span>
+                    <span class="val">+<%= (player.pet && player.pet.hpBuff) ? player.pet.hpBuff : 0 %></span>
+                </div>
+                <div class="stat-card">
+                    <span class="label">SỨC MẠNH</span>
+                    <span class="val">+<%= (player.pet && player.pet.atkBuff) ? player.pet.atkBuff : 0 %></span>
+                </div>
+                <div class="stat-card">
+                    <span class="label">TỐC ĐỘ</span>
+                    <span class="val">+<%= (player.pet && player.pet.speedBuff) ? player.pet.speedBuff : 0 %></span>
+                </div>
+            </div>
+
+            <div class="description-box">
+                "<%= (player.pet && player.pet.description) ? player.pet.description : 'Đồng hành trung thành trên mọi nẻo đường.' %>"
+            </div>
+
+            <a href="/" class="btn-back-home">⬅ QUAY LẠI TRẠM CHỈ HUY</a>
+        </div>
+    </div>
+
+</body>
+</html>

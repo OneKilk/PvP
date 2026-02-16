@@ -1,0 +1,34 @@
+<div id="matchmaking-overlay" class="match-overlay-vs">
+    <div class="crt-overlay"></div>
+
+    <div class="vs-container">
+        <div class="vs-card player-side">
+            <div class="pixel-frame">
+                <% if (player.avatar) { %>
+                    <img src="<%= player.avatar %>" class="vs-avatar">
+                <% } else { %>
+                    <span class="vs-placeholder">🛡️</span>
+                <% } %>
+            </div>
+            <div class="vs-name"><%= player.name %></div>
+        </div>
+
+        <div class="vs-center">
+            <div class="vs-logo">VS</div>
+            <div class="pixel-loader-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <div class="vs-card enemy-side">
+            <div class="pixel-frame mystery">
+                <div class="mystery-mark">?</div>
+            </div>
+            <div class="vs-name">ĐANG TÌM...</div>
+        </div>
+    </div>
+
+    <div class="vs-footer">
+        <a href="/" class="btn-abort-pixel">HỦY TÌM TRẬN</a>
+    </div>
+</div>
